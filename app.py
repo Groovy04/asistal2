@@ -738,7 +738,7 @@ def performance_graph():
 
     planned_data = pandas.read_sql("select * from SALESMTPLANNED_db", dbconnection)
     actual_data = pandas.read_sql("select * from SALESMTACTUAL_db", dbconnection)
-    myfilter = planned_data["year_planned_db"]==2021
+    myfilter = planned_data["year_planned_db"]==2022
     planned_data.sort_values(by='month_order_db', ascending=True, inplace=True)
     filtered_planned_data = planned_data[myfilter]
 
