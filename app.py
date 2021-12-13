@@ -794,7 +794,7 @@ def performance_graph_2021():
     #//////////////////////////////
     #//////////////////////////////BOKEH TEST REGION
 
-    return  render_template("performance_graph.html", script=script, div=div)
+    return  render_template("performance_graph_2021.html", script=script, div=div)
 
 
 @app.route('/performance_graph_2022')
@@ -865,7 +865,7 @@ def performance_graph_2022():
     #//////////////////////////////
     #//////////////////////////////BOKEH TEST REGION
 
-    return  render_template("performance_graph.html", script=script, div=div)
+    return  render_template("performance_graph_2022.html", script=script, div=div)
 
 
 
