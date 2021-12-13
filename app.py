@@ -56,7 +56,7 @@ bcrypt = Bcrypt(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://tansubaktiran:Avz9p9&9Dgsu_099@193.111.73.99/tansubaktiran"
 
 #Secret key
-app.config['SECRET_KEY'] = "changedforsecuritypurposes"
+app.config['SECRET_KEY'] = "$2b$12$P5vdQLFZE.7.Cji.aqKBZOJm8nOL4VT5hP0OWuhHQ216NL5nqAvie"
 #Initialize the adatabase
 db = SQLAlchemy(app)
 
@@ -726,9 +726,9 @@ def logout():
 
 
 
-@app.route('/performance_graph')
+@app.route('/performance_graph_2021')
 @login_required
-def performance_graph():
+def performance_graph_2021():
     #//////////////////////////////
     #//////////////////////////////BOKEH TEST REGION
 
@@ -795,6 +795,80 @@ def performance_graph():
     #//////////////////////////////BOKEH TEST REGION
 
     return  render_template("performance_graph.html", script=script, div=div)
+
+
+@app.route('/performance_graph_2022')
+@login_required
+def performance_graph_2022():
+    #//////////////////////////////
+    #//////////////////////////////BOKEH TEST REGION
+
+    # Connecting to MySQL server using mysql-python DBAPI 
+    engine = create_engine("mysql+pymysql://tansubaktiran:Avz9p9&9Dgsu_099@193.111.73.99/tansubaktiran")
+    dbconnection = engine.connect()
+
+    planned_data = pandas.read_sql("select * from SALESMTPLANNED_db", dbconnection)
+    actual_data = pandas.read_sql("select * from SALESMTACTUAL_db", dbconnection)
+    myfilter = planned_data["year_planned_db"]==2022
+    planned_data.sort_values(by='month_order_db', ascending=True, inplace=True)
+    filtered_planned_data = planned_data[myfilter]
+
+    source1 = ColumnDataSource(filtered_planned_data)
+    source2 = ColumnDataSource(actual_data)
+
+    circle_size=10
+    bar_width=.5
+
+    f = figure(x_range=filtered_planned_data["month_unique_db"], title ="Planned and Actual Total Volume (in MT)")
+    f.circle(x="month_unique_db", y="tot_vol_planned_db", size=circle_size, fill_alpha=.4, color="navy", source=source1)
+    f.vbar(x="month_unique_db", top="tot_vol_actual_db", width=bar_width, color="orangered", fill_alpha=.4, source=source2)
+
+    f2 = figure(x_range=filtered_planned_data["month_unique_db"], title ="Planned and Actual MF (in MT)")
+    f2.circle(x="month_unique_db", y="tot_mf_planned_db", size=circle_size , fill_alpha=.4, color="navy", source=source1)
+    f2.vbar(x="month_unique_db", top="tot_mf_actual_db", width=bar_width, color="blue", fill_alpha=.4, source=source2)
+
+    f3 = figure(x_range=filtered_planned_data["month_unique_db"], title ="Planned and Actual ANODIZE (in MT)")
+    f3.circle(x="month_unique_db", y="tot_anodize_planned_db", size=circle_size, fill_alpha=.4, color="navy", source=source1)
+    f3.vbar(x="month_unique_db", top="tot_anodize_actual_db", width=bar_width, color="gold", fill_alpha=.4, source=source2)
+
+    f4 = figure(x_range=filtered_planned_data["month_unique_db"], title ="Planned and Actual POWDER COATING (in MT)")
+    f4.circle(x="month_unique_db", y="tot_powder_coat_planned_db", size=circle_size, fill_alpha=.4, color="navy", source=source1)
+    f4.vbar(x="month_unique_db", top="tot_powder_coat_actual_db", width=bar_width, color="purple", fill_alpha=.4, source=source2)
+
+    f5 = figure(x_range=filtered_planned_data["month_unique_db"], title ="Planned and Actual WOOD FINISH (in MT)")
+    f5.circle(x="month_unique_db", y="tot_wood_finish_planned_db", size=circle_size, fill_alpha=.4, color="navy", source=source1)
+    f5.vbar(x="month_unique_db", top="tot_wood_finish_actual_db", width=bar_width, color="green", fill_alpha=.4, source=source2)
+
+    f6 = figure(x_range=filtered_planned_data["month_unique_db"], title ="Planned and Actual CRIMPING (in MT)")
+    f6.circle(x="month_unique_db", y="tot_crimping_planned_db", size=circle_size, fill_alpha=.4, color="navy", source=source1)
+    f6.vbar(x="month_unique_db", top="tot_crimping_actual_db", width=bar_width, color="turquoise", fill_alpha=.4, source=source2)
+
+    f7 = figure(x_range=filtered_planned_data["month_unique_db"], title ="Planned and Actual Total Revenues (in EUR)")
+    f7.circle(x="month_unique_db", y="tot_EUR_planned_db", size=circle_size, fill_alpha=.4, color="navy", source=source1)
+    f7.vbar(x="month_unique_db", top="tot_EUR_actual_db", width=bar_width, color="gold", fill_alpha=.4, source=source2)
+
+    f8 = figure(x_range=filtered_planned_data["month_unique_db"], title ="Number of Planned and Actual New Customers")
+    f8.circle(x="month_unique_db", y="new_customers_planned_db", size=circle_size, fill_alpha=.4, color="navy", source=source1)
+    f8.vbar(x="month_unique_db", top="new_customers_actual_db", width=bar_width, color="lightblue", fill_alpha=.4, source=source2)
+
+    figure_list = [f,f2,f3,f4,f5,f6,f7,f8]
+    for fig in figure_list:
+        fig.xaxis.major_label_orientation = pi/4
+
+    lay_out = gridplot([[f,f2,f3], [f4,f5,f6],[f7,f8]],plot_width=400, plot_height=400)
+    #show(column(Div(text="<h2>Asistal - CRM Dashboard - Test-1 05.11.21 </h2></br><h3>Year 2021 Records</h3></br><h3>Circles are targets, bars are actual values</h3>"), lay_out))
+    #show(f)
+    script, div = components(lay_out)
+    dbconnection.close()
+
+    #IMPROVE THE ABOVE    
+    #//////////////////////////////
+    #//////////////////////////////BOKEH TEST REGION
+
+    return  render_template("performance_graph.html", script=script, div=div)
+
+
+
 
 
 if __name__ == "__main__":
