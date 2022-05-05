@@ -54,7 +54,7 @@ from forms import Login, SalesMTPlanned, SalesMTActual, Customer1, Customer1_Sea
 app = Flask(__name__)
 
 bcrypt = Bcrypt(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://tansubaktiran:Avz9p9&9Dgsu_099@193.111.73.99/tansubaktiran"
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://tansubaktiran:secret@193.111.73.99/tansubaktiran"
 
 #Secret key
 app.config['SECRET_KEY'] = "CHANGEDFORSECURITYPURPOSES"
